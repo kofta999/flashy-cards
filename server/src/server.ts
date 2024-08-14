@@ -67,7 +67,7 @@ app.post('/decks', authenticateJWT, async (req, res) => {
   try {
     const deck = await prisma.deck.create({
       data: {
-        title: name, // Assuming `title` is the correct field for deck name
+        title: name, 
         ownerId: userId,
       },
     });
@@ -102,7 +102,7 @@ app.delete('/decks/:id', authenticateJWT, async (req, res) => {
 
   try {
     await prisma.deck.delete({ where: { id: Number(id) } });
-    res.status(204).send(); // No content
+    res.status(204).send(); 
   } catch (error) {
     console.error("Error deleting deck:", error);
     res.status(500).json({ error: 'Failed to delete deck', details: (error as Error).message });
@@ -146,7 +146,7 @@ app.put('/cards/:id', authenticateJWT, async (req, res) => {
 
   try {
     // Update the card
-    const card = await prisma.card.update({
+const card = await prisma.card.update({
       where: { id: Number(id) },
       data: {
         front,
@@ -166,7 +166,6 @@ app.delete('/cards/:id', authenticateJWT, async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Delete the card
     await prisma.card.delete({ where: { id: Number(id) } });
     res.status(204).send(); // No content
   } catch (error) {
