@@ -10,7 +10,6 @@ const PORT = 4000;
 
 app.use(bodyParser.json());
 
-// Middleware for authentication
 const authenticateJWT = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   const authHeader = req.headers.authorization;
   if (authHeader) {
