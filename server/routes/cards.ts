@@ -1,9 +1,8 @@
 import express from 'express';
-import { PrismaClient } from '@prisma/client';
+import prisma from 'models/prismaClient';
 import authenticateJWT from '../middleware/authMiddleware';
 
 const router = express.Router();
-const prisma = new PrismaClient();
 
 // Create Card
 router.post('/', authenticateJWT, async (req, res) => {
