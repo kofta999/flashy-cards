@@ -1,7 +1,7 @@
 import { registerUserSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { RegisterFormSchema as FormSchema } from "@/types";
 import {
   Form,
   FormControl,
@@ -11,26 +11,59 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-
-type FormSchema = z.infer<typeof registerUserSchema>;
+import LoadingButton from "./LoadingButton";
+import { registerUser } from "@/services/authService";
+import { useNavigate } from "@tanstack/react-router";
 
 export default function RegisterForm() {
+  const navigate = useNavigate();
+
   const form = useForm<FormSchema>({
     resolver: zodResolver(registerUserSchema),
     defaultValues: {
+      name: "",
       email: "",
       password: "",
     },
   });
 
-  function onSubmit(values: FormSchema) {
-    console.log(values);
+  const {
+    formState: { isSubmitting },
+  } = form;
+
+  async function onSubmit(values: FormSchema) {
+    try {
+      await registerUser(values);
+      // toast
+
+      navigate({ to: "/login" });
+    } catch (error) {
+      // toast
+    }
   }
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-7">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input
+                  type="text"
+                  placeholder="Enter your name..."
+                  {...field}
+                />
+              </FormControl>
+
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="email"
@@ -61,7 +94,11 @@ export default function RegisterForm() {
           )}
         />
 
-        <Button type="submit">Register</Button>
+        <LoadingButton
+          loadingText="Registering..."
+          loading={isSubmitting}
+          text="Register"
+        />
       </form>
     </Form>
   );
