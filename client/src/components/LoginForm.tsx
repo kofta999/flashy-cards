@@ -1,7 +1,7 @@
-import { registerUserSchema } from "@/schemas";
+import { loginUserSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { RegisterFormSchema as FormSchema } from "@/types";
+import { LoginFormSchema as FormSchema } from "@/types";
 import {
   Form,
   FormControl,
@@ -12,7 +12,7 @@ import {
 } from "./ui/form";
 import { Input } from "./ui/input";
 import LoadingButton from "./LoadingButton";
-import { registerUser } from "@/services/authService";
+import { loginUser } from "@/services/authService";
 import { useNavigate } from "@tanstack/react-router";
 import { useToast } from "./ui/use-toast";
 
@@ -21,9 +21,8 @@ export default function RegisterForm() {
   const { toast } = useToast();
 
   const form = useForm<FormSchema>({
-    resolver: zodResolver(registerUserSchema),
+    resolver: zodResolver(loginUserSchema),
     defaultValues: {
-      name: "",
       email: "",
       password: "",
     },
@@ -35,15 +34,15 @@ export default function RegisterForm() {
 
   async function onSubmit(values: FormSchema) {
     try {
-      await registerUser(values);
+      await loginUser(values);
       toast({
-        title: "Registeration Successful",
-        description: "Redirecting to login page",
+        title: "Logging in Successful",
+        description: "Redirecting to home page",
       });
-      navigate({ to: "/login" });
+      navigate({ to: "/home" });
     } catch {
       toast({
-        title: "Registeration Error",
+        title: "Logging in Error",
         description: "Please try again later",
         variant: "destructive",
       });
@@ -53,25 +52,6 @@ export default function RegisterForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-7">
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Name</FormLabel>
-              <FormControl>
-                <Input
-                  type="text"
-                  placeholder="Enter your name..."
-                  {...field}
-                />
-              </FormControl>
-
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
         <FormField
           control={form.control}
           name="email"
@@ -103,9 +83,9 @@ export default function RegisterForm() {
         />
 
         <LoadingButton
-          loadingText="Registering..."
+          loadingText="Logging in..."
           loading={isSubmitting}
-          text="Register"
+          text="Login"
         />
       </form>
     </Form>
