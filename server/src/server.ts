@@ -1,8 +1,8 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import authRoutes from '../routes/auth';
-import deckRoutes from '../routes/decks';
-import cardRoutes from '../routes/cards';
+import authRoutes from './routes/auth';
+import deckRoutes from './routes/decks';
+import cardRoutes from './routes/cards';
 
 const app = express();
 const PORT = 4000;

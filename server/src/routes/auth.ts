@@ -1,5 +1,5 @@
 import express from 'express';
-import prisma from 'models/prismaClient';
+import prisma from '../models/prismaClient';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
