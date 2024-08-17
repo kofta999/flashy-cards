@@ -25,7 +25,7 @@ export const loginUser = async (values: LoginFormSchema) => {
 
     console.log(data);
 
-    localStorage.set("token", data.token);
+    localStorage.setItem("token", data.token);
   } catch (error) {
     console.error(error);
     throw new Error("Error happened while logging in");
