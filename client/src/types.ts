@@ -11,3 +11,23 @@ export interface IUser {
   password: string;
   name: string;
 }
+
+export interface IDeckItem {
+  id: number;
+  dueCardsCount: number;
+  title: string;
+}
+
+export interface IDeck {
+  id: number;
+  title: string;
+  description: string;
+  cards: ICard[];
+}
+
+export interface ICard {
+  id: string;
+  front: string;
+  back: string;
+  completed: boolean;
+}

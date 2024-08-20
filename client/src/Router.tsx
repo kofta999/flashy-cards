@@ -12,6 +12,7 @@ import { isAuth } from "./services/authService";
 import Home from "./pages/Home";
 import Layout from "./Layout";
 import { ThemeProvider } from "./contexts/theme/ThemeProvider";
+import Deck from "./components/Deck";
 
 const rootRoute = createRootRoute({
   component: () => (
@@ -26,7 +27,7 @@ const rootRoute = createRootRoute({
 
 const registerRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/register",
+  path: "register",
   component: Register,
   beforeLoad: () => {
     if (isAuth()) {
@@ -37,7 +38,7 @@ const registerRoute = createRoute({
 
 const loginRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/login",
+  path: "login",
   component: Login,
   beforeLoad: () => {
     if (isAuth()) {
@@ -48,7 +49,7 @@ const loginRoute = createRoute({
 
 const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/home",
+  path: "home",
   component: Home,
   beforeLoad: () => {
     if (!isAuth()) {
@@ -57,7 +58,24 @@ const homeRoute = createRoute({
   },
 });
 
-const routeTree = rootRoute.addChildren([registerRoute, loginRoute, homeRoute]);
+// TODO: Make that better
+const deckRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "home/decks/$deckId",
+  component: Deck,
+  beforeLoad: () => {
+    if (!isAuth()) {
+      throw redirect({ to: "/login" });
+    }
+  },
+});
+
+const routeTree = rootRoute.addChildren([
+  registerRoute,
+  loginRoute,
+  homeRoute,
+  deckRoute,
+]);
 
 const router = createRouter({ routeTree });
 
