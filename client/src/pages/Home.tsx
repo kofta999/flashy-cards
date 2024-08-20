@@ -1,4 +1,5 @@
 import DeckList from "@/components/DeckList";
+import { Button } from "@/components/ui/button";
 import { IDeckItem } from "@/types";
 
 export default function Home() {
@@ -14,8 +15,11 @@ export default function Home() {
 
   return (
     <div>
-      <main className="border rounded p-5 md:w-1/2 md:mx-auto mx-5">
-        <header></header>
+      <main className="border rounded p-5 md:w-1/2 lg:w-1/3 md:mx-auto mx-5">
+        <header className="mb-5 flex">
+          <h1 className="text-3xl font-bold mr-auto">Deck List</h1>
+          <Button variant={"outline"}>Create</Button>
+        </header>
 
         <DeckList decks={deckItems} />
       </main>

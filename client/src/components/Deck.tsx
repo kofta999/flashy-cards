@@ -20,7 +20,7 @@ export default function Deck() {
   };
 
   return (
-    <div className="border rounded p-5 md:w-1/2 md:mx-auto mx-5 flex flex-col justify-between text-center min-h-[50dvh]">
+    <div className="border rounded p-5 md:w-1/2 lg:w-1/3 md:mx-auto mx-5 flex flex-col justify-between text-center min-h-[50dvh]">
       <h1 className="text-3xl font-bold">{deck.title}</h1>
 
       <p>{deck.description}</p>
