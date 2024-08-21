@@ -24,9 +24,42 @@ router.get("/", authenticateJWT, async (req, res) => {
 
     res.status(200).json(formattedDecks);
   } catch (error) {
-    console.error("Error creating deck:", error);
+    console.error("Error fetching decks:", error);
     res.status(500).json({
       error: "Failed to fetch decks",
+      details: (error as Error).message,
+    });
+  }
+});
+
+// Get a single deck
+router.get("/:id", authenticateJWT, async (req, res) => {
+  const ownerId = (req as any).user.id;
+
+  // TODO: handle errors here if id is a literal string
+  const deckId = parseInt(req.params.id);
+
+  try {
+    const deck = await prisma.deck.findUnique({
+      where: { id: deckId, ownerId },
+      include: {
+        cards: {
+          select: { id: true, front: true, back: true, completed: true },
+        },
+      },
+    });
+
+    if (!deck) {
+      return res.status(404).json({ error: "Deck not found" });
+    }
+
+    const { id, title, cards, description } = deck;
+
+    res.status(200).json({ id, title, description, cards });
+  } catch (error) {
+    console.error("Error fetching deck:", error);
+    res.status(500).json({
+      error: "Failed to fetch deck",
       details: (error as Error).message,
     });
   }
