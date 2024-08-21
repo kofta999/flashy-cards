@@ -1,4 +1,4 @@
- // prisma/schema.prisma
+// prisma/schema.prisma
 
 datasource db {
   provider = "postgresql" // 
@@ -10,27 +10,29 @@ generator client {
 }
 
 model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  password  String
-  name      String?
-  decks     Deck[]
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  password String
+  name     String?
+  decks    Deck[]
 }
 
 model Deck {
-  id        Int     @id @default(autoincrement())
-  title     String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  owner     User    @relation(fields: [ownerId], references: [id])
-  ownerId   Int
-  cards     Card[]
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String   @default("No description")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  owner       User     @relation(fields: [ownerId], references: [id])
+  ownerId     Int
+  cards       Card[]
 }
 
 model Card {
-  id        Int      @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   front     String
   back      String
-  deck      Deck     @relation(fields: [deckId], references: [id])
+  deck      Deck    @relation(fields: [deckId], references: [id])
+  completed Boolean @default(false)
   deckId    Int
 }
