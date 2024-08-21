@@ -82,7 +82,7 @@ export default function Deck() {
     return (
       <>
         <h3 className="text-2xl">
-          Congrats! You've completed this deck for now
+          Congrats! You've completed this deck for now.
         </h3>
       </>
     );

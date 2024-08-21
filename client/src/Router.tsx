@@ -13,13 +13,18 @@ import Home from "./pages/Home";
 import Layout from "./Layout";
 import { ThemeProvider } from "./contexts/theme/ThemeProvider";
 import Deck from "./components/Deck";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 const rootRoute = createRootRoute({
   component: () => (
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <Layout />
-        <TanStackRouterDevtools />
+        <QueryClientProvider client={queryClient}>
+          <Layout />
+          <TanStackRouterDevtools />
+        </QueryClientProvider>
       </ThemeProvider>
     </>
   ),

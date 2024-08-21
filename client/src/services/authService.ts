@@ -37,3 +37,16 @@ export const logout = () => localStorage.removeItem("token");
 export const getToken = () => localStorage.getItem("token");
 
 export const isAuth = () => !!localStorage.getItem("token");
+
+export const authedClient = axios.create();
+
+authedClient.interceptors.request.use((config) => {
+  const token = getToken();
+
+  if (!token) {
+    throw new Error("Token not found");
+  }
+
+  config.headers.Authorization = `Bearer ${token}`;
+  return config;
+});
