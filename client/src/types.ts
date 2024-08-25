@@ -1,9 +1,11 @@
 import { z } from "zod";
-import { loginUserSchema, registerUserSchema } from "./schemas";
+import { createDeckSchema, loginUserSchema, registerUserSchema } from "./schemas";
 
 export type RegisterFormSchema = z.infer<typeof registerUserSchema>;
 
 export type LoginFormSchema = z.infer<typeof loginUserSchema>;
+
+export type CreateDeckSchema = z.infer<typeof createDeckSchema>;
 
 export interface IUser {
   id: number;
@@ -26,8 +28,8 @@ export interface IDeck {
 }
 
 export interface ICard {
-  id: string;
+  id?: string;
   front: string;
   back: string;
-  completed: boolean;
+  completed?: boolean;
 }

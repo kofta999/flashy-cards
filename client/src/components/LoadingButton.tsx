@@ -1,4 +1,5 @@
-import { Button } from "./ui/button";
+import { ButtonHTMLAttributes } from "react";
+import { Button, ButtonProps } from "./ui/button";
 import { Loader2 } from "lucide-react";
 
 interface LoadingButtonProps {
@@ -11,9 +12,10 @@ export default function LoadingButton({
   loading,
   loadingText = "Loading...",
   text,
-}: LoadingButtonProps) {
+  ...props
+}: LoadingButtonProps & ButtonProps) {
   return (
-    <Button disabled={loading} type="submit">
+    <Button {...props} disabled={loading} type="submit">
       {loading ? (
         <>
           <Loader2 className="h-4 w-4 mr-2 animate-spin" />

@@ -26,3 +26,14 @@ export async function getDeck(deckId: number) {
     throw error;
   }
 }
+
+export async function createDeck(deck: IDeck) {
+  try {
+    const { data } = await authedClient.post(DECKS_API_URL, deck);
+
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

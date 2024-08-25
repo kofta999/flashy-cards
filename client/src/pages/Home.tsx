@@ -3,11 +3,13 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { getDecks } from "@/services/decksService";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 
 export default function Home() {
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const { data, error, status } = useQuery({
     queryKey: ["decks"],
@@ -34,7 +36,12 @@ export default function Home() {
       <main className="border rounded p-5 md:w-1/2 lg:w-1/3 md:mx-auto mx-5 flex flex-col gap-5 text-center min-h-[50dvh]">
         <header className="mb-5 flex">
           <h1 className="text-3xl font-bold mr-auto">Deck List</h1>
-          <Button variant={"outline"}>Create</Button>
+          <Button
+            onClick={() => navigate({ to: "/home/decks/new" })}
+            variant={"outline"}
+          >
+            Create
+          </Button>
         </header>
 
         {status === "success" && data.length > 0 && <DeckList decks={data} />}

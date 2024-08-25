@@ -14,6 +14,7 @@ import Layout from "./Layout";
 import { ThemeProvider } from "./contexts/theme/ThemeProvider";
 import Deck from "./components/Deck";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import CreateDeck from "./components/CreateDeck";
 
 const queryClient = new QueryClient();
 
@@ -75,11 +76,23 @@ const deckRoute = createRoute({
   },
 });
 
+const newDeckRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "home/decks/new",
+  component: CreateDeck,
+  beforeLoad: () => {
+    if (!isAuth()) {
+      throw redirect({ to: "/login" });
+    }
+  },
+});
+
 const routeTree = rootRoute.addChildren([
   registerRoute,
   loginRoute,
   homeRoute,
   deckRoute,
+  newDeckRoute,
 ]);
 
 const router = createRouter({ routeTree });
