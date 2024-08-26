@@ -88,6 +88,7 @@ export default function RegisterForm() {
 
         <LoadingButton
           loadingText="Logging in..."
+          className="w-full"
           loading={isSubmitting}
           text="Login"
         />

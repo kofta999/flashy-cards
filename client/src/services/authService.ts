@@ -1,6 +1,7 @@
 import { API_URL } from "@/consts";
 import type { IUser, LoginFormSchema, RegisterFormSchema } from "@/types";
 import axios from "axios";
+import { jwtDecode } from "jwt-decode";
 
 const AUTH_API_URL = API_URL + "/auth";
 
@@ -40,11 +41,28 @@ export const isAuth = () => !!localStorage.getItem("token");
 
 export const authedClient = axios.create();
 
-authedClient.interceptors.request.use((config) => {
+const isTokenExpired = (token: string) => {
+  if (!token) return true;
+  try {
+    const decodedToken = jwtDecode(token);
+    const currentTime = Date.now() / 1000;
+    return decodedToken.exp! < currentTime;
+  } catch (error) {
+    console.error("Error decoding token:", error);
+    return true;
+  }
+};
+
+authedClient.interceptors.request.use(async (config) => {
   const token = getToken();
 
   if (!token) {
     throw new Error("Token not found");
+  }
+
+  if (isTokenExpired(token)) {
+    logout();
+    history.replaceState({}, "", "/login");
   }
 
   config.headers.Authorization = `Bearer ${token}`;
