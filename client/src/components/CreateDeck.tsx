@@ -21,7 +21,7 @@ import CardsPreview from "./CardsPreview";
 export default function CreateDeck() {
   const form = useForm<CreateDeckSchema>({
     resolver: zodResolver(createDeckSchema),
-    defaultValues: { name: "", prompt: "", noOfCards: 1 },
+    defaultValues: { title: "", prompt: "", noOfCards: 1 },
   });
 
   const { toast } = useToast();
@@ -39,14 +39,17 @@ export default function CreateDeck() {
   });
 
   return (
-    <>
+    <div className="border rounded p-5 md:w-1/2 lg:w-1/3 md:mx-auto mx-5 h-[75dvh]">
       {mutation.isSuccess && <CardsPreview deck={mutation.data} />}
       {!mutation.isSuccess && (
         <Form {...form}>
-          <form onSubmit={form.handleSubmit((v) => mutation.mutate(v))}>
+          <form
+            className="flex flex-col gap-5 h-full"
+            onSubmit={form.handleSubmit((v) => mutation.mutate(v))}
+          >
             <FormField
               control={form.control}
-              name="name"
+              name="title"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Title</FormLabel>
@@ -102,12 +105,13 @@ export default function CreateDeck() {
 
             <LoadingButton
               text="Generate Deck!"
+              className="mt-auto"
               loading={mutation.isPending}
               loadingText="Generating cards..."
             />
           </form>
         </Form>
       )}
-    </>
+    </div>
   );
 }

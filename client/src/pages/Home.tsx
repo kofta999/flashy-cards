@@ -33,7 +33,7 @@ export default function Home() {
 
   return (
     <div>
-      <main className="border rounded p-5 md:w-1/2 lg:w-1/3 md:mx-auto mx-5 flex flex-col gap-5 text-center min-h-[50dvh]">
+      <main className="border rounded p-5 md:w-1/2 lg:w-1/3 md:mx-auto mx-5 flex flex-col gap-5 text-center min-h-[75dvh]">
         <header className="mb-5 flex">
           <h1 className="text-3xl font-bold mr-auto">Deck List</h1>
           <Button

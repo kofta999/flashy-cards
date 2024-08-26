@@ -9,7 +9,7 @@ export const registerUserSchema = z.object({
 export const loginUserSchema = registerUserSchema.omit({ name: true });
 
 export const createDeckSchema = z.object({
-  name: z.string().min(1),
-  prompt: z.string().min(1),
+  title: z.string().min(5),
+  prompt: z.string().min(10),
   noOfCards: z.coerce.number().gt(0).lt(51),
 });

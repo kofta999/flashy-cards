@@ -10,7 +10,7 @@ export const generateCards = async (values: CreateDeckSchema) => {
   });
 
   const google = createGoogleGenerativeAI({
-    apiKey: process.env.GEMINI_API_KEY,
+    apiKey: import.meta.env.VITE_GEMINI_API_KEY,
   });
 
   const { object } = await generateObject({
@@ -26,7 +26,7 @@ export const generateCards = async (values: CreateDeckSchema) => {
   console.log(cards);
 
   return {
-    name: values.name,
+    title: values.title,
     description: values.prompt,
     cards,
   };

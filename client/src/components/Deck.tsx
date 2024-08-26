@@ -114,7 +114,7 @@ export default function Deck() {
   }
 
   return (
-    <div className="border rounded p-5 md:w-1/2 lg:w-1/3 md:mx-auto mx-5 flex flex-col justify-between text-center min-h-[50dvh]">
+    <div className="border rounded p-5 md:w-1/2 lg:w-1/3 md:mx-auto mx-5 flex flex-col justify-between text-center h-[50dvh]">
       {deck.id === 0 && (
         <Loader2 className=" mx-auto animate-spin w-10 h-10 mt-10 mb-10" />
       )}

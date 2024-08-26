@@ -21,7 +21,7 @@ export interface IDeckItem {
 }
 
 export interface IDeck {
-  id: number;
+  id?: number;
   title: string;
   description: string;
   cards: ICard[];
