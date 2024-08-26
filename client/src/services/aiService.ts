@@ -10,7 +10,7 @@ export const generateCards = async (values: CreateDeckSchema) => {
   });
 
   const google = createGoogleGenerativeAI({
-    apiKey: "AIzaSyC9e6u6HRcoNgAdwPWgCB2FpQWdQOiukko",
+    apiKey: process.env.GEMINI_API_KEY,
   });
 
   const { object } = await generateObject({
