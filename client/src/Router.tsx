@@ -9,25 +9,26 @@ import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
 import { isAuth } from "./services/authService";
-import Home from "./pages/Home";
-import Layout from "./Layout";
+import Decks from "./pages/Decks";
+import Layout from "./components/layouts/Layout";
 import { ThemeProvider } from "./contexts/theme/ThemeProvider";
-import Deck from "./components/Deck";
+import Deck from "./pages/Deck";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import CreateDeck from "./components/CreateDeck";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import CreateDeck from "./pages/CreateDeck";
+import DecksLayout from "./components/layouts/DecksLayout";
 
 const queryClient = new QueryClient();
 
 const rootRoute = createRootRoute({
   component: () => (
-    <>
-      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-        <QueryClientProvider client={queryClient}>
-          <Layout />
-          <TanStackRouterDevtools />
-        </QueryClientProvider>
-      </ThemeProvider>
-    </>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <QueryClientProvider client={queryClient}>
+        <Layout />
+        <ReactQueryDevtools />
+        <TanStackRouterDevtools />
+      </QueryClientProvider>
+    </ThemeProvider>
   ),
 });
 
@@ -37,7 +38,7 @@ const registerRoute = createRoute({
   component: Register,
   beforeLoad: () => {
     if (isAuth()) {
-      throw redirect({ to: "/home" });
+      throw redirect({ to: "/decks" });
     }
   },
 });
@@ -48,15 +49,15 @@ const loginRoute = createRoute({
   component: Login,
   beforeLoad: () => {
     if (isAuth()) {
-      throw redirect({ to: "/home" });
+      throw redirect({ to: "/decks" });
     }
   },
 });
 
-const homeRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "home",
-  component: Home,
+const decksIndexRoute = createRoute({
+  getParentRoute: () => decksRoute,
+  path: "/",
+  component: Decks,
   beforeLoad: () => {
     if (!isAuth()) {
       throw redirect({ to: "/login" });
@@ -64,10 +65,15 @@ const homeRoute = createRoute({
   },
 });
 
-// TODO: Make that better
-const deckRoute = createRoute({
+const decksRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "home/decks/$deckId",
+  path: "/decks",
+  component: DecksLayout,
+});
+
+const deckRoute = createRoute({
+  getParentRoute: () => decksRoute,
+  path: "$deckId",
   component: Deck,
   beforeLoad: () => {
     if (!isAuth()) {
@@ -77,8 +83,8 @@ const deckRoute = createRoute({
 });
 
 const newDeckRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "home/decks/new",
+  getParentRoute: () => decksRoute,
+  path: "new",
   component: CreateDeck,
   beforeLoad: () => {
     if (!isAuth()) {
@@ -90,9 +96,7 @@ const newDeckRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   registerRoute,
   loginRoute,
-  homeRoute,
-  deckRoute,
-  newDeckRoute,
+  decksRoute.addChildren([decksIndexRoute, deckRoute, newDeckRoute]),
 ]);
 
 const router = createRouter({ routeTree });

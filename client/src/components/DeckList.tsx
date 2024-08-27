@@ -11,7 +11,7 @@ export default function DeckList({ decks }: DeckListProps) {
     <ul className="grid gap-3">
       {decks.flatMap((deck, i) => [
         <li key={deck.id}>
-          <Link className="flex items-center" to={`/home/decks/${deck.id}`}>
+          <Link className="flex items-center" to={`/decks/${deck.id}`}>
             <div className="mr-auto text-2xl">{deck.title}</div>
 
             <div>

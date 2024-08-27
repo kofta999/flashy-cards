@@ -9,14 +9,14 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "./ui/form";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
+} from "../components/ui/form";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
 import { generateCards } from "@/services/aiService";
-import { useToast } from "./ui/use-toast";
+import { useToast } from "../components/ui/use-toast";
 import { useMutation } from "@tanstack/react-query";
-import LoadingButton from "./LoadingButton";
-import CardsPreview from "./CardsPreview";
+import LoadingButton from "@/components/LoadingButton";
+import CardsPreview from "@/components/CardsPreview";
 
 export default function CreateDeck() {
   const form = useForm<CreateDeckSchema>({
@@ -39,7 +39,7 @@ export default function CreateDeck() {
   });
 
   return (
-    <div className="border rounded p-5 md:w-1/2 lg:w-1/3 md:mx-auto mx-5 h-[75dvh]">
+    <>
       {mutation.isSuccess && <CardsPreview deck={mutation.data} />}
       {!mutation.isSuccess && (
         <Form {...form}>
@@ -112,6 +112,6 @@ export default function CreateDeck() {
           </form>
         </Form>
       )}
-    </div>
+    </>
   );
 }

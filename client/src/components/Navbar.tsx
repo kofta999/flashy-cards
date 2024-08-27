@@ -32,7 +32,7 @@ export default function Navbar() {
       {isAuth() ? (
         <>
           <Button
-            onClick={() => navigate({ to: "/home" })}
+            onClick={() => navigate({ to: "/decks" })}
             variant={"ghost"}
             className="text-xl"
           >

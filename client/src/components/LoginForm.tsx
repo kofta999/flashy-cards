@@ -39,7 +39,7 @@ export default function RegisterForm() {
         title: "Logging in Successful",
         description: "Redirecting to home page",
       });
-      navigate({ to: "/home" });
+      navigate({ to: "/decks" });
     } catch {
       toast({
         title: "Logging in Error",

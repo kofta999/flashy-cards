@@ -25,7 +25,7 @@ export default function CardsPreview({ deck }: CardsPreviewProps) {
   const [cards, dispatch] = useReducer(reducer, initCards);
   const mutation = useMutation({
     mutationFn: createDeck,
-    onSuccess: () => navigate({ to: "/home" }),
+    onSuccess: () => navigate({ to: "/decks" }),
     onError: () =>
       toast({
         title: "Error happened while submitting",
