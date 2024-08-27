@@ -49,6 +49,16 @@ router.post(
         return createdDeck;
       });
 
+      // Alternative approach
+      // const deck = await prisma.deck.create({
+      //   data: {
+      //     title,
+      //     description,
+      //     cards: { createMany: { data: cards } },
+      //     ownerId,
+      //   },
+      // });
+
       res.status(201).json(deck);
     } catch (error) {
       console.error(error);
@@ -94,9 +104,26 @@ router.get("/", authenticateJWT, async (req: Request, res: Response) => {
   const ownerId = (req as any).user.id;
   const decks = await prisma.deck.findMany({
     where: { ownerId },
-    include: { cards: true },
+    select: {
+      id: true,
+      title: true,
+      _count: {
+        select: {
+          cards: {
+            where: { completed: false },
+          },
+        },
+      },
+    },
   });
-  res.json(decks);
+
+  const mappedDecks = decks.map((deck) => ({
+    id: deck.id,
+    title: deck.title,
+    dueCardsCount: deck._count.cards,
+  }));
+
+  res.json(mappedDecks);
 });
 
 // Update Deck

@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { createDeckSchema, loginUserSchema, registerUserSchema } from "./schemas";
+import {
+  createDeckSchema,
+  loginUserSchema,
+  registerUserSchema,
+} from "./schemas";
 
 export type RegisterFormSchema = z.infer<typeof registerUserSchema>;
 
