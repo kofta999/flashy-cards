@@ -1,7 +1,7 @@
-import express  from 'express';
-import {Request, Response} from 'express';
-import { PrismaClient } from '@prisma/client';
-import authenticateJWT from '../middleware/authMiddleware';
+import express from "express";
+import { Request, Response } from "express";
+import { PrismaClient } from "@prisma/client";
+import authenticateJWT from "../middleware/authMiddleware";
 
 const prisma = new PrismaClient();
 const router = express.Router();
@@ -11,48 +11,51 @@ interface MyRequest<T> extends Request {
 }
 
 interface CreateDeckDTO {
-  name: string;
+  title: string;
   description: string;
-  initialCards: Array<{
+  cards: Array<{
     front: string;
     back: string;
   }>;
 }
 
-
 // Create deck
-router.post('/', authenticateJWT, async (req: MyRequest<CreateDeckDTO>, res: Response) => {
-  const { name, description, initialCards } = req.body;
-  const ownerId = (req as any).user.id;
+router.post(
+  "/",
+  authenticateJWT,
+  async (req: MyRequest<CreateDeckDTO>, res: Response) => {
+    const { title, description, cards } = req.body;
+    const ownerId = (req as any).user.id;
 
-  try {
-    const deck = await prisma.$transaction(async (prisma) => {
-      const createdDeck = await prisma.deck.create({
-        data: {
-          title: name,
-          desc: description,
-          ownerId,
-        },
+    try {
+      const deck = await prisma.$transaction(async (prisma) => {
+        const createdDeck = await prisma.deck.create({
+          data: {
+            title,
+            description,
+            ownerId,
+          },
+        });
+        const cardData = cards.map((card) => ({
+          front: card.front,
+          back: card.back,
+          deckId: createdDeck.id,
+        }));
+
+        await prisma.card.createMany({
+          data: cardData,
+        });
+
+        return createdDeck;
       });
-      const cardData = initialCards.map((card) => ({
-        front: card.front,
-        back: card.back,
-        deckId: createdDeck.id,
-      }));
 
-      await prisma.card.createMany({
-        data: cardData,
-      });
-
-      return createdDeck;
-    });
-
-    res.status(201).json(deck);
-  } catch (error) {
-    console.error(error);
-    res.status(400).json({ error: 'Failed to create deck and cards' });
-  }
-});
+      res.status(201).json(deck);
+    } catch (error) {
+      console.error(error);
+      res.status(400).json({ error: "Failed to create deck and cards" });
+    }
+  },
+);
 
 router.get("/:id", authenticateJWT, async (req, res) => {
   const ownerId = (req as any).user.id;
@@ -87,7 +90,7 @@ router.get("/:id", authenticateJWT, async (req, res) => {
 });
 
 // Get Decks
-router.get('/', authenticateJWT, async (req:Request, res:Response) => {
+router.get("/", authenticateJWT, async (req: Request, res: Response) => {
   const ownerId = (req as any).user.id;
   const decks = await prisma.deck.findMany({
     where: { ownerId },
@@ -97,7 +100,7 @@ router.get('/', authenticateJWT, async (req:Request, res:Response) => {
 });
 
 // Update Deck
-router.put('/:id', authenticateJWT, async (req:Request, res:Response) => {
+router.put("/:id", authenticateJWT, async (req: Request, res: Response) => {
   const { id } = req.params;
   const { title } = req.body;
   try {
@@ -107,18 +110,18 @@ router.put('/:id', authenticateJWT, async (req:Request, res:Response) => {
     });
     res.json(deck);
   } catch (error) {
-    res.status(400).json({ error: 'Failed to update deck' });
+    res.status(400).json({ error: "Failed to update deck" });
   }
 });
 
 // Delete Deck
-router.delete('/:id', authenticateJWT, async (req:Request, res:Response) => {
+router.delete("/:id", authenticateJWT, async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
     await prisma.deck.delete({ where: { id: Number(id) } });
     res.status(204).send();
   } catch (error) {
-    res.status(400).json({ error: 'Failed to delete deck' });
+    res.status(400).json({ error: "Failed to delete deck" });
   }
 });
 
