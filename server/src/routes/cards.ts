@@ -40,12 +40,11 @@ router.put('/:id', authenticateJWT, async (req, res) => {
   const { front, back } = req.body;
 
   try {
-    // Update the card
-    const card = await prisma.card.update({
+      const card = await prisma.card.update({
       where: { id: Number(id) },
       data: {
         front,
-        back,
+        back, 
       },
     });
 
@@ -66,6 +65,41 @@ router.delete('/:id', authenticateJWT, async (req, res) => {
   } catch (error) {
     console.error("Error deleting card:", error);
     res.status(500).json({ error: 'Failed to delete card', details: (error as Error).message });
+  }
+});
+
+
+router.put('/edit-cards/:deckId', authenticateJWT, async(req, res)=> {
+  const { deckId } = req.params;
+  const { cards } = req.body;
+
+  if(!cards || !Array.isArray(cards)) {
+    return res.status(400).json({error: "invalid or non-existent card data"})
+
+  }
+
+  try {
+    const deck = await prisma.deck.findUnique({where: {id: Number(deckId)}});
+    if(!deck) {
+      return res.status(404).json({error: " Deck doesnt exist"});
+
+    }
+    const updatedCards = await prisma.$transaction(
+      cards.map((card) =>
+        prisma.card.update({
+          where: { id: card.id },
+          data: {
+            front: card.front,
+            back: card.back,
+          },
+        })
+      )
+    );
+
+    res.json(updatedCards);
+  } catch (error) {
+    console.error('Error updating cards:', error);
+    res.status(500).json({ error: 'Failed to update cards', details: (error as Error).message });
   }
 });
 
