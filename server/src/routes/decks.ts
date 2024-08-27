@@ -1,38 +1,59 @@
-import express from "express";
-import prisma from "../models/prismaClient";
-import authenticateJWT from "../middleware/authMiddleware";
+import express  from 'express';
+import {Request, Response} from 'express';
+import { PrismaClient } from '@prisma/client';
+import authenticateJWT from '../middleware/authMiddleware';
 
+const prisma = new PrismaClient();
 const router = express.Router();
 
-// Get decks
-router.get("/", authenticateJWT, async (req, res) => {
+interface MyRequest<T> extends Request {
+  body: T;
+}
+
+interface CreateDeckDTO {
+  name: string;
+  description: string;
+  initialCards: Array<{
+    front: string;
+    back: string;
+  }>;
+}
+
+
+// Create deck
+router.post('/', authenticateJWT, async (req: MyRequest<CreateDeckDTO>, res: Response) => {
+  const { name, description, initialCards } = req.body;
   const ownerId = (req as any).user.id;
 
   try {
-    const decks = await prisma.deck.findMany({
-      where: { ownerId },
-      include: {
-        _count: { select: { cards: { where: { completed: false } } } },
-      },
+    const deck = await prisma.$transaction(async (prisma) => {
+      const createdDeck = await prisma.deck.create({
+        data: {
+          title: name,
+          desc: description,
+          ownerId,
+        },
+      });
+      const cardData = initialCards.map((card) => ({
+        front: card.front,
+        back: card.back,
+        deckId: createdDeck.id,
+      }));
+
+      await prisma.card.createMany({
+        data: cardData,
+      });
+
+      return createdDeck;
     });
 
-    const formattedDecks = decks.map((deck) => ({
-      id: deck.id,
-      title: deck.title,
-      dueCardsCount: deck._count.cards,
-    }));
-
-    res.status(200).json(formattedDecks);
+    res.status(201).json(deck);
   } catch (error) {
-    console.error("Error fetching decks:", error);
-    res.status(500).json({
-      error: "Failed to fetch decks",
-      details: (error as Error).message,
-    });
+    console.error(error);
+    res.status(400).json({ error: 'Failed to create deck and cards' });
   }
 });
 
-// Get a single deck
 router.get("/:id", authenticateJWT, async (req, res) => {
   const ownerId = (req as any).user.id;
 
@@ -65,64 +86,39 @@ router.get("/:id", authenticateJWT, async (req, res) => {
   }
 });
 
-// Create Deck
-router.post("/", authenticateJWT, async (req, res) => {
-  const { name, description } = req.body;
-  const userId = req.user?.id;
-
-  if (!userId) return res.sendStatus(401); // Unauthorized
-
-  try {
-    const deck = await prisma.deck.create({
-      data: {
-        title: name,
-        description,
-        ownerId: userId,
-      },
-    });
-    res.status(201).json(deck);
-  } catch (error) {
-    console.error("Error creating deck:", error);
-    res.status(500).json({
-      error: "Failed to create deck",
-      details: (error as Error).message,
-    });
-  }
+// Get Decks
+router.get('/', authenticateJWT, async (req:Request, res:Response) => {
+  const ownerId = (req as any).user.id;
+  const decks = await prisma.deck.findMany({
+    where: { ownerId },
+    include: { cards: true },
+  });
+  res.json(decks);
 });
 
-// Edit Deck
-router.put("/:id", authenticateJWT, async (req, res) => {
+// Update Deck
+router.put('/:id', authenticateJWT, async (req:Request, res:Response) => {
   const { id } = req.params;
-  const { name } = req.body;
-
+  const { title } = req.body;
   try {
     const deck = await prisma.deck.update({
       where: { id: Number(id) },
-      data: { title: name }, // Assuming `title` is the correct field for deck name
+      data: { title },
     });
     res.json(deck);
   } catch (error) {
-    console.error("Error updating deck:", error);
-    res.status(500).json({
-      error: "Failed to update deck",
-      details: (error as Error).message,
-    });
+    res.status(400).json({ error: 'Failed to update deck' });
   }
 });
 
 // Delete Deck
-router.delete("/:id", authenticateJWT, async (req, res) => {
+router.delete('/:id', authenticateJWT, async (req:Request, res:Response) => {
   const { id } = req.params;
-
   try {
     await prisma.deck.delete({ where: { id: Number(id) } });
     res.status(204).send();
   } catch (error) {
-    console.error("Error deleting deck:", error);
-    res.status(500).json({
-      error: "Failed to delete deck",
-      details: (error as Error).message,
-    });
+    res.status(400).json({ error: 'Failed to delete deck' });
   }
 });
 
