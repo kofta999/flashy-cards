@@ -17,6 +17,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import CreateDeck from "./pages/CreateDeck";
 import DecksLayout from "./components/layouts/DecksLayout";
+import EditDeck from "./pages/EditDeck";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const rootRoute = createRootRoute({
   component: () => (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
       <QueryClientProvider client={queryClient}>
+        {" "}
         <Layout />
         <ReactQueryDevtools />
         <TanStackRouterDevtools />
@@ -93,10 +95,26 @@ const newDeckRoute = createRoute({
   },
 });
 
+const editDeckRoute = createRoute({
+  getParentRoute: () => decksRoute,
+  path: "$deckId/edit",
+  component: EditDeck,
+  beforeLoad: () => {
+    if (!isAuth()) {
+      throw redirect({ to: "/login" });
+    }
+  },
+});
+
 const routeTree = rootRoute.addChildren([
   registerRoute,
   loginRoute,
-  decksRoute.addChildren([decksIndexRoute, deckRoute, newDeckRoute]),
+  decksRoute.addChildren([
+    decksIndexRoute,
+    deckRoute,
+    editDeckRoute,
+    newDeckRoute,
+  ]),
 ]);
 
 const router = createRouter({ routeTree });

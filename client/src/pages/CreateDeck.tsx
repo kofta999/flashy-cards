@@ -43,6 +43,7 @@ export default function CreateDeck() {
       {mutation.isSuccess && <CardsPreview deck={mutation.data} />}
       {!mutation.isSuccess && (
         <Form {...form}>
+          <h2 className="text-3xl font-bold mb-5">Create Deck</h2>
           <form
             className="flex flex-col gap-5 h-full"
             onSubmit={form.handleSubmit((v) => mutation.mutate(v))}

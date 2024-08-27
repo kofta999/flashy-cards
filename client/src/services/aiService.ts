@@ -1,14 +1,9 @@
 import { CreateDeckSchema } from "@/types";
 import { generateObject } from "ai";
-import { z } from "zod";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { cardSchema } from "@/schemas";
 
 export const generateCards = async (values: CreateDeckSchema) => {
-  const cardSchema = z.object({
-    front: z.string(),
-    back: z.string(),
-  });
-
   const google = createGoogleGenerativeAI({
     apiKey: import.meta.env.VITE_GEMINI_API_KEY,
   });

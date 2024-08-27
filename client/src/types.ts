@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   createDeckSchema,
+  editDeckSchema,
   loginUserSchema,
   registerUserSchema,
 } from "./schemas";
@@ -10,6 +11,8 @@ export type RegisterFormSchema = z.infer<typeof registerUserSchema>;
 export type LoginFormSchema = z.infer<typeof loginUserSchema>;
 
 export type CreateDeckSchema = z.infer<typeof createDeckSchema>;
+
+export type EditDeckSchema = z.infer<typeof editDeckSchema>;
 
 export interface IUser {
   id: number;

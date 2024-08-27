@@ -19,6 +19,8 @@ interface CreateDeckDTO {
   }>;
 }
 
+type EditDeckDTO = CreateDeckDTO;
+
 // Create deck
 router.post(
   "/",
@@ -127,19 +129,24 @@ router.get("/", authenticateJWT, async (req: Request, res: Response) => {
 });
 
 // Update Deck
-router.put("/:id", authenticateJWT, async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { title } = req.body;
-  try {
-    const deck = await prisma.deck.update({
-      where: { id: Number(id) },
-      data: { title },
-    });
-    res.json(deck);
-  } catch (error) {
-    res.status(400).json({ error: "Failed to update deck" });
-  }
-});
+router.put(
+  "/:id",
+  authenticateJWT,
+  async (req: MyRequest<EditDeckDTO>, res: Response) => {
+    const { id } = req.params;
+    const { title, description, cards } = req.body;
+    try {
+      const deck = await prisma.deck.update({
+        where: { id: Number(id) },
+        data: { title, description },
+      });
+      res.json(deck);
+    } catch (error) {
+      console.error(error)
+      res.status(400).json({ error: "Failed to update deck" });
+    }
+  },
+);
 
 // Delete Deck
 router.delete("/:id", authenticateJWT, async (req: Request, res: Response) => {

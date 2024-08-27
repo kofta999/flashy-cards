@@ -8,8 +8,19 @@ export const registerUserSchema = z.object({
 
 export const loginUserSchema = registerUserSchema.omit({ name: true });
 
+export const cardSchema = z.object({
+  front: z.string(),
+  back: z.string(),
+});
+
 export const createDeckSchema = z.object({
   title: z.string().min(5),
   prompt: z.string().min(10),
   noOfCards: z.coerce.number().gt(0).lt(51),
+});
+
+export const editDeckSchema = z.object({
+  title: z.string().min(5),
+  description: z.string().min(10),
+  cards: z.array(cardSchema),
 });

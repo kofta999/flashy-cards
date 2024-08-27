@@ -37,3 +37,17 @@ export async function createDeck(deck: IDeck) {
     throw error;
   }
 }
+
+export async function updateDeck(deck: IDeck) {
+  try {
+    const { data } = await authedClient.put(
+      DECKS_API_URL + "/" + deck.id,
+      deck,
+    );
+
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

@@ -1,10 +1,10 @@
-import { useParams } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import { Button } from "../components/ui/button";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getDeck } from "@/services/decksService";
 import { useToast } from "../components/ui/use-toast";
-import { Loader2 } from "lucide-react";
+import { Edit, Loader2 } from "lucide-react";
 
 export default function Deck() {
   const { deckId } = useParams({ from: "/decks/$deckId" });
@@ -14,7 +14,7 @@ export default function Deck() {
     error,
     status,
   } = useQuery({
-    queryKey: ["deck"],
+    queryKey: ["decks", deckId],
     queryFn: () => getDeck(parseInt(deckId)),
     initialData: { id: 0, title: "", cards: [], description: "" },
   });
@@ -53,7 +53,14 @@ export default function Deck() {
   function Idle() {
     return (
       <>
-        <h1 className="text-3xl font-bold">{deck.title}</h1>
+        <div className="flex items-center">
+          <h1 className="text-3xl font-bold">{deck.title}</h1>
+          <Link className="ml-auto" to={`/decks/${deck.id}/edit`}>
+            <Button variant={"outline"} className="text-lg py-6">
+              Edit <Edit className="ml-3" />
+            </Button>
+          </Link>
+        </div>
 
         <p>{deck.description}</p>
 
