@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  cardSchema,
   createDeckSchema,
   editDeckSchema,
   loginUserSchema,
@@ -34,9 +35,4 @@ export interface IDeck {
   cards: ICard[];
 }
 
-export interface ICard {
-  id?: string;
-  front: string;
-  back: string;
-  completed?: boolean;
-}
+export type ICard = z.infer<typeof cardSchema>;

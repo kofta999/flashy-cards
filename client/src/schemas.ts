@@ -9,8 +9,10 @@ export const registerUserSchema = z.object({
 export const loginUserSchema = registerUserSchema.omit({ name: true });
 
 export const cardSchema = z.object({
+  id: z.number().optional(),
   front: z.string(),
   back: z.string(),
+  completed: z.literal<boolean>(false).optional(),
 });
 
 export const createDeckSchema = z.object({

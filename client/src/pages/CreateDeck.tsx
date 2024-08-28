@@ -45,7 +45,7 @@ export default function CreateDeck() {
         <Form {...form}>
           <h2 className="text-3xl font-bold mb-5">Create Deck</h2>
           <form
-            className="flex flex-col gap-5 h-full"
+            className="flex flex-col gap-5 h-[90%]"
             onSubmit={form.handleSubmit((v) => mutation.mutate(v))}
           >
             <FormField

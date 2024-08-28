@@ -11,7 +11,7 @@ export const generateCards = async (values: CreateDeckSchema) => {
   const { object } = await generateObject({
     model: google("gemini-1.5-flash"),
 
-    schema: cardSchema,
+    schema: cardSchema.pick({ front: true, back: true }),
     output: "array",
     prompt: `Generate exactly ${values.noOfCards + 10} unique Anki-style flashcards on the theme: '${values.prompt}'. Ensure no duplicates.`,
   });
