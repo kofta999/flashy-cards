@@ -18,6 +18,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import CreateDeck from "./pages/CreateDeck";
 import DecksLayout from "./components/layouts/DecksLayout";
 import EditDeck from "./pages/EditDeck";
+import Landing from "./pages/Landing";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,12 @@ const loginRoute = createRoute({
       throw redirect({ to: "/decks" });
     }
   },
+});
+
+const landingRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/",
+  component: Landing,
 });
 
 const decksIndexRoute = createRoute({
@@ -109,6 +116,7 @@ const editDeckRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   registerRoute,
   loginRoute,
+  landingRoute,
   decksRoute.addChildren([
     decksIndexRoute,
     deckRoute,

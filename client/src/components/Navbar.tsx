@@ -2,7 +2,7 @@ import { isAuth, logout } from "@/services/authService";
 import { Button } from "./ui/button";
 import { useNavigate } from "@tanstack/react-router";
 import { useToast } from "./ui/use-toast";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Zap } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,9 +25,10 @@ export default function Navbar() {
     <div className="flex gap-5 justify-center items-center p-4">
       <div
         onClick={() => navigate({ to: "/" })}
-        className="mr-auto font-bold text-3xl cursor-pointer select-none"
+        className="flex items-center justify-center mr-auto font-bold text-3xl cursor-pointer select-none"
       >
-        Flashy
+        <Zap className="h-6 w-6 text-primary" />
+        <span className="ml-2 text-2xl font-bold text-primary">Flashy</span>
       </div>
       {isAuth() ? (
         <>
