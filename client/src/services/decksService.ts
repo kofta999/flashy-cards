@@ -56,3 +56,13 @@ export async function updateDeck(deck: {
     throw error;
   }
 }
+
+export async function deleteDeck(id: number) {
+  try {
+    const { data } = await authedClient.delete(DECKS_API_URL + "/" + id);
+    console.log(data);
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+}

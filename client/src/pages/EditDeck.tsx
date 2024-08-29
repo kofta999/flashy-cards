@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { editDeckSchema } from "@/schemas";
-import { getDeck, updateDeck } from "@/services/decksService";
+import { deleteDeck, getDeck, updateDeck } from "@/services/decksService";
 import {
   Action,
   ICardsDiff,
@@ -25,9 +25,21 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { Edit, Delete } from "lucide-react";
+import { Edit, Delete, Trash } from "lucide-react";
 import { useEffect, useReducer, useState } from "react";
 import { useForm } from "react-hook-form";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 type ReducerState = { cards: ICard[]; diff: ICardsDiff };
 
@@ -83,13 +95,27 @@ export default function CreateDeck() {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: deleteDeck,
+    onError: (error) => {
+      console.error(error);
+      toast({
+        title: "Error happened while deleting deck",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+    },
+    onSuccess: () => {
+      toast({ title: "Deleted deck successfully!" });
+      navigate({ to: "/decks" });
+    },
+  });
+
   useEffect(() => {
     if (currentDeck) {
       form.reset(currentDeck);
     }
   }, [currentDeck, form]);
-
-  console.log(state.diff);
 
   return (
     <>
@@ -101,7 +127,34 @@ export default function CreateDeck() {
             open={open}
             setOpen={setOpen}
           />
-          <h2 className="text-3xl font-bold mb-5">Edit Deck</h2>
+          <div className="flex justify-center items-center mb-5">
+            <h2 className="text-3xl font-bold mr-auto">Edit Deck</h2>
+            <AlertDialog>
+              <AlertDialogTrigger>
+                <Button variant={"destructive"}>
+                  Delete
+                  <Trash className="ml-2" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    this deck and all its cards from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => deleteMutation.mutate(currentDeck!.id!)}
+                  >
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
           <form
             className="flex flex-col gap-5 h-[90%]"
             onSubmit={form.handleSubmit((v) =>

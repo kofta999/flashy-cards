@@ -170,6 +170,7 @@ router.delete("/:id", authenticateJWT, async (req: Request, res: Response) => {
     await prisma.deck.delete({ where: { id: Number(id) } });
     res.status(204).send();
   } catch (error) {
+    console.error(error);
     res.status(400).json({ error: "Failed to delete deck" });
   }
 });

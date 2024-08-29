@@ -60,7 +60,7 @@ export default function EditCard({
         </DialogHeader>
 
         <Form {...form}>
-          <div>
+          <div className="flex flex-col gap-5">
             <FormField
               control={form.control}
               name="front"
