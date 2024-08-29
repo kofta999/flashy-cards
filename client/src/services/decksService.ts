@@ -1,5 +1,5 @@
 import { API_URL } from "@/consts";
-import { IDeck, IDeckItem } from "@/types";
+import { ICardsDiff, IDeck, IDeckItem } from "@/types";
 import { authedClient } from "./authService";
 
 const DECKS_API_URL = API_URL + "/decks";
@@ -38,7 +38,12 @@ export async function createDeck(deck: IDeck) {
   }
 }
 
-export async function updateDeck(deck: IDeck) {
+export async function updateDeck(deck: {
+  id: number;
+  title: string;
+  description: string;
+  diff: ICardsDiff;
+}) {
   try {
     const { data } = await authedClient.put(
       DECKS_API_URL + "/" + deck.id,

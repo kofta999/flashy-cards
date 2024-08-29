@@ -36,3 +36,15 @@ export interface IDeck {
 }
 
 export type ICard = z.infer<typeof cardSchema>;
+
+export type PreviewCard = Omit<ICard, "completed">;
+
+export type Action = {
+  card: PreviewCard;
+  type: "delete" | "edit";
+};
+
+export type ICardsDiff = {
+  deleted: { id: number }[];
+  updated: ICard[];
+};

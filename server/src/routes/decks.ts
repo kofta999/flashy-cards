@@ -1,6 +1,6 @@
 import express from "express";
 import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { Card, PrismaClient } from "@prisma/client";
 import authenticateJWT from "../middleware/authMiddleware";
 
 const prisma = new PrismaClient();
@@ -19,7 +19,14 @@ interface CreateDeckDTO {
   }>;
 }
 
-type EditDeckDTO = CreateDeckDTO;
+type EditDeckDTO = {
+  title: string;
+  description: string;
+  diff: {
+    deleted: { id: number }[];
+    updated: Omit<Card, "deckId">[];
+  };
+};
 
 // Create deck
 router.post(
@@ -79,9 +86,7 @@ router.get("/:id", authenticateJWT, async (req, res) => {
     const deck = await prisma.deck.findUnique({
       where: { id: deckId, ownerId },
       include: {
-        cards: {
-          select: { id: true, front: true, back: true, completed: true },
-        },
+        cards: true,
       },
     });
 
@@ -134,15 +139,25 @@ router.put(
   authenticateJWT,
   async (req: MyRequest<EditDeckDTO>, res: Response) => {
     const { id } = req.params;
-    const { title, description, cards } = req.body;
+    const { title, description, diff } = req.body;
     try {
       const deck = await prisma.deck.update({
         where: { id: Number(id) },
-        data: { title, description },
+        data: {
+          title,
+          description,
+          cards: {
+            deleteMany: diff.deleted,
+            updateMany: diff.updated.map((card) => ({
+              where: { id: card.id },
+              data: card,
+            })),
+          },
+        },
       });
       res.json(deck);
     } catch (error) {
-      console.error(error)
+      console.error(error);
       res.status(400).json({ error: "Failed to update deck" });
     }
   },

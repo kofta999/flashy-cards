@@ -1,44 +1,23 @@
-import { createDeck } from "@/services/decksService";
-import { ICard, IDeck } from "@/types";
-import { useMutation } from "@tanstack/react-query";
+import { Action, IDeck, PreviewCard } from "@/types";
 import { Delete, Edit } from "lucide-react";
 import { useReducer, useState } from "react";
 import LoadingButton from "./LoadingButton";
-import { useNavigate } from "@tanstack/react-router";
 import { ScrollArea } from "./ui/scroll-area";
-import { useToast } from "./ui/use-toast";
 import EditCard from "./EditCard";
+import { UseMutationResult } from "@tanstack/react-query";
 
 interface CardsPreviewProps {
   deck: IDeck;
+  mutation: UseMutationResult<void, Error, IDeck, unknown>;
 }
 
-type PreviewCard = Omit<ICard, "completed">;
-type Action = {
-  card: PreviewCard;
-  type: "delete" | "edit";
-};
-
-export default function CardsPreview({ deck }: CardsPreviewProps) {
+export default function CardsPreview({ deck, mutation }: CardsPreviewProps) {
   const initCards = deck.cards.map((card, id) => ({ id, ...card }));
-
-  const navigate = useNavigate();
-  const { toast } = useToast();
 
   const [cards, dispatch] = useReducer(reducer, initCards);
   const [currentCard, setCurrentCard] = useState<PreviewCard>({
     front: "",
     back: "",
-  });
-
-  const mutation = useMutation({
-    mutationFn: createDeck,
-    onSuccess: () => navigate({ to: "/decks" }),
-    onError: () =>
-      toast({
-        title: "Error happened while submitting",
-        variant: "destructive",
-      }),
   });
 
   return (

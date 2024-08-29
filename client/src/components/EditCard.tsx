@@ -20,17 +20,22 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "./ui/dialog";
-import { ReactNode, useEffect } from "react";
+import { useEffect } from "react";
 
 interface EditCardProps {
   card: ICard;
   onSubmit: (card: ICard) => void;
-  trigger: ReactNode;
+  open: boolean;
+  setOpen: (open: boolean) => void;
 }
 
-export default function EditCard({ card, onSubmit, trigger }: EditCardProps) {
+export default function EditCard({
+  card,
+  onSubmit,
+  open,
+  setOpen,
+}: EditCardProps) {
   const form = useForm({
     resolver: zodResolver(cardSchema),
     defaultValues: card,
@@ -40,10 +45,14 @@ export default function EditCard({ card, onSubmit, trigger }: EditCardProps) {
     form.reset(card);
   }, [card, form]);
 
-  return (
-    <Dialog>
-      <DialogTrigger>{trigger}</DialogTrigger>
+  const handleSubmit = (event: React.MouseEvent) => {
+    event.preventDefault();
+    form.handleSubmit(onSubmit)();
+    setOpen(false);
+  };
 
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Card</DialogTitle>
@@ -51,7 +60,7 @@ export default function EditCard({ card, onSubmit, trigger }: EditCardProps) {
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)}>
+          <div>
             <FormField
               control={form.control}
               name="front"
@@ -87,14 +96,14 @@ export default function EditCard({ card, onSubmit, trigger }: EditCardProps) {
             <DialogFooter>
               <DialogClose asChild>
                 <LoadingButton
-                  type="submit"
                   text="Save"
-                  loading={form.formState.isSubmitting}
+                  loading={false}
                   loadingText="Saving..."
+                  onClick={handleSubmit}
                 />
               </DialogClose>
             </DialogFooter>
-          </form>
+          </div>
         </Form>
       </DialogContent>
     </Dialog>
