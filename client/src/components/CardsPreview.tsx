@@ -14,6 +14,7 @@ interface CardsPreviewProps {
 export default function CardsPreview({ deck, mutation }: CardsPreviewProps) {
   const initCards = deck.cards.map((card, id) => ({ id, ...card }));
 
+  const [open, setOpen] = useState(false);
   const [cards, dispatch] = useReducer(reducer, initCards);
   const [currentCard, setCurrentCard] = useState<PreviewCard>({
     front: "",
@@ -23,6 +24,12 @@ export default function CardsPreview({ deck, mutation }: CardsPreviewProps) {
   return (
     <div className="flex flex-col gap-5 h-full">
       <h3 className="text-3xl font-bold">Preview Cards</h3>
+      <EditCard
+        card={currentCard}
+        onSubmit={(card) => dispatch({ card, type: "edit" })}
+        open={open}
+        setOpen={setOpen}
+      />
       <ScrollArea className="h-3/4">
         <div className="flex flex-col gap-4 h-full">
           {cards.map((card) => (
@@ -33,15 +40,12 @@ export default function CardsPreview({ deck, mutation }: CardsPreviewProps) {
               </div>
 
               <div className="ml-auto flex flex-col gap-3">
-                <EditCard
-                  card={currentCard}
-                  onSubmit={(card) => dispatch({ card, type: "edit" })}
-                  trigger={
-                    <Edit
-                      className="cursor-pointer"
-                      onClick={() => setCurrentCard(card)}
-                    />
-                  }
+                <Edit
+                  className="cursor-pointer"
+                  onClick={() => {
+                    setOpen((o) => !o);
+                    setCurrentCard(card);
+                  }}
                 />
 
                 <Delete
